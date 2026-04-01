@@ -1,0 +1,282 @@
+---
+title:  "Using Python in R Studio"
+author:  "Perine - DATA 205"
+date:  "March 2026"
+#output: html_document
+  
+    
+jupyter:
+  jupytext:
+    cell_metadata_filter: -all
+    formats: ipynb,Rmd
+    main_language: python
+    text_representation:
+      extension: .Rmdam
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.16.7
+---
+
+This RMarkdown notebook is prepared to show DATA 205 students how to use both to Python syntax in a familiar IDE. It modifies the [ISLP](https://www.statlearning.com/resources-python) notebook [Ch02-statlearn-lab.Rmd](https://github.com/intro-stat-learning/ISLP_labs/blob/stable/Ch02-statlearn-lab.Rmd) with configuration information and references to R syntax for comparison. It also incorporates part of an example from [How to Use R in Google Colab (2026 Update)](https://www.codingthepast.com/2023/10/03/R-in-GoogleColab.html)
+
+#Setup
+To run this demo lab, you will need two things:
+
+* An installation of `Python3`, which is the specific version of `Python`  used in the labs.
+* An installation of the  `reticulate` package.
+
+You can download and install  `Python3`   by downloading installers and following the instructions available at [Python downloads](https://www.python.org/downloads/)
+
+The `reticulate`provides an R interface to Python and enables conversion between R and Python in the same document. Python code chunks can be embedded and executed directly in Rmarkdown or Quarto documents. [Watch this video](https://www.youtube.com/watch?v=6541wEO_04o) for a general introduction on using `reticulate` to run Python in RStudio.
+
+When it is installed, `reticulate` will look for Python installation. In RStudio, you can explicitly configure which Python interpreter to use by navigating to **Tools > Global Options > Python**
+
+Once you have installed Python3 and configured the global options in RStudio, you can continue with the installation of the `reticulate` package:
+
+```{r, setup}
+#options(repos = c(CRAN = "https://cran.rstudio.com/"))
+#install.packages("reticulate")
+library(reticulate)
+reticulate::py_config()
+```
+
+# Syntax Reminders:  R Vesus Python
+
+## Basic Commands
+
+In this demo, we will introduce some simple `Python` commands. 
+ For more resources about `Python` in general, readers may want to consult the tutorial at [docs.python.org/3/tutorial/](https://docs.python.org/3/tutorial/). 
+ 
+
+###Python is a calculator just like R
+
+Addition and subtraction in R:
+```{r}
+3 + 5 - 1
+```
+
+Addition and subtraction in Python:
+
+```{python}
+3 + 5 - 1
+```
+
+Multiplication in R:
+```{r}
+2 * 402
+```
+Multiplication in Python:
+```{python}
+2 * 402
+```
+Multiplication and division in R:
+
+```{r}
+(139/5) * 2
+```
+Multiplication and division in Python:
+
+```{python}
+(139/5) * 2
+```
+
+In Python, a variable or feature is referred to as an object.  R is also an object-oriented language, but we tend to refer to variables as such, because of the orientation to statistical analysis. 
+
+To assign objects, we use `=` instead of `<-`
+
+Assigning values to two objects (variables), then performing an operation and displaying the result:
+```{r}
+gdp <- 592993954831
+pop <- 100000000
+gdp_per_capita<- gdp/pop
+gdp_per_capita
+```
+Same operation, done in Python:
+```{python}
+gdp = 592993954831
+pop = 100000000
+gdp_per_capita = gdp/pop
+print(gdp_per_capita)
+```
+##Arithmetic Operations on numbers:
+
+Operator	  Name	      Description
+a + b	    Addition	    Sum of a and b
+a - b	   Subtraction	  Difference of a and b
+a * b	  Multiplication	Product of a and b
+a / b	True division	    Quotient of a and b
+a // b	Floor division	Quotient of a and b, removing fractional parts
+a % b	Modulus	Integer   remainder after division of a by b
+a ** b	Exponentiation	a raised to the power of b
+-a	  Negation	        The negative of a
+
+##Concatenate versus numerical operation (addition)
+
+In `Python`, textual data is handled using
+*strings*. For instance, `"hello"` and
+`'hello'`
+are strings. 
+We can concatenate them using the addition `+` symbol.
+
+```{python}
+"hello" + " " + "world"
+```
+
+ A string is actually a type of *sequence*: this is a generic term for an ordered list. 
+ The three most important types of sequences are lists, tuples, and strings.  
+We introduce lists now. 
+
+
+The following command instructs `Python` to join together
+the numbers 3, 4, and 5, and to save them as a
+*list* named `x`. When we
+type `x`, it gives us back the list.
+
+```{python}
+x = [3, 4, 5]
+x
+```
+
+Note that we used the brackets
+`[]` to construct this list. 
+
+We will often want to add two sets of numbers together. It is reasonable to try the following code,
+though it will not produce the desired results.
+
+```{python}
+y = [4, 9, 7]
+x + y
+
+```
+
+The result may appear slightly counterintuitive: why did `Python` not add the entries of the lists element-by-element? 
+
+ In `Python`, lists hold *arbitrary* objects, and  are added using  *concatenation*. 
+ In fact, concatenation is the behavior that we saw earlier when we entered `"hello" + " " + "world"`. 
+ 
+This example reflects the fact that 
+ `Python` is a general-purpose programming language. Much of `Python`'s  data-specific
+functionality comes from other packages, notably `numpy`
+and `pandas`. 
+
+Later in this lab, we will introduce the  `numpy` package. 
+See [docs.scipy.org/doc/numpy/user/quickstart.html](https://docs.scipy.org/doc/numpy/user/quickstart.html) for more information about `numpy`.
+
+
+##Data Types
+
+Python has similar basic data types to R, but they have different names. You can determine the data type by cuing the command `type`:
+
+```{python}
+type("Hello World")
+```
+
+```{python}
+type(42)
+```
+
+```{python}
+type(54.3)
+```
+
+```{python}
+type(False)
+```
+
+#Switching Between R and Python for Analysis
+
+Here is a basic workflow in R to analyze the historical popularity of the baby name Bruno, using data from the `babynames` package in R.
+
+```{r}
+# Install the necessary package 
+install.packages("babynames")
+
+# Load the library
+library(babynames)
+
+# Inspect the structure of the dataset
+str(babynames)
+
+# Filter the dataset for a specific name
+bruno_df <- babynames[babynames$name == "Bruno", ]
+
+# Plot the historical popularity of the name
+plot(x = bruno_df$year, 
+    y = bruno_df$n,
+    type = "l",
+    main = "Historical Popularity of the Name Bruno in the US",
+    xlab = "Year",
+    ylab = "Number of Babies")
+```
+
+Now suppose that once you've extrated data from the `babynames` package, you prefer to do visualization and further analysis in Python.  Here's what a workflow might look like.
+
+Initially in R:
+
+```{r}
+# Install the necessary package directly in the Colab cell
+#install.packages("babynames")
+
+# Load the library
+#library(babynames)
+
+# Inspect the structure of the dataset
+str(babynames)
+
+# Filter the dataset for a specific name
+bruno_df <- babynames[babynames$name == "Bruno", ]
+
+#Display the first few rows to make sure you have the desired data
+head(bruno_df)
+
+
+```
+
+Now you have an R data frame.  We need to pull this R object into a Python.
+
+Insert Python chunks (using green "C" icon or `Ctrl + Alt + I).  
+
+```{python}
+
+
+#Import the needed Python libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
+
+1.  Access the R data frame directly and convert it to a Pandas Data Frame
+
+```{python}
+df = r.bruno_df
+```
+
+2. Set the aesthetic style
+```{python}
+sns.set_theme(style="whitegrid")
+```
+
+3. Create a line plot showing the proportion of babies named Bruno over time
+
+
+```{python}
+plt.figure(figsize=(10, 6))
+plot = sns.lineplot(data=df, x='year', y='prop', hue='sex')
+```
+
+4. Add titles and labels
+
+```{python}
+plot.set_title("Historical Popularity of the Name 'Bruno'", fontsize=16)
+plot.set_xlabel("Year", fontsize=12)
+plot.set_ylabel("Proportion of Total Births", fontsize=12)
+```
+
+5.  Display the plot
+
+```{python}
+plt.show()
+```
+
+
+
